@@ -67,28 +67,8 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="data" class="level2">
 <h2 class="anchored" data-anchor-id="data">Data</h2>
-<p><strong>1. Last ned House Sales King County, USA fra Kaggle</strong></p>
-<ul>
-<li>Sjekk definisjonen på de ulike variablene</li>
-<li>Les .csv filen med <em>House Sales King County</em> inn i R</li>
-<li>Sorter salgene «descending» etter dato, siste først (dvs. mai 2015, april 2015 osv.)</li>
-<li>Bruk <code>dplyr::distinct()</code> til å velge siste salg der vi har multiple salg av samme eiendom.</li>
-<li>Bruk <code>st_as_sf()</code> til å konvertere house data til et sf objekt vha. long lat og sett til geografisk projeksjon, dvs EPSG:4326.</li>
-<li>Konverter dette sf objektet så til projeksjonen EPSG:2926.</li>
-<li>Bruk koordinatene fra Seattles wikipedia-side (øvre høyre hjørne, klikk linken så får dere koordinatene i desimal form) og sett dette punktet som CBD for Seattle.</li>
-<li>Konverter dette punktet til EPSG:2926. Finn avstanden mellom dette punktet og samtlige hus i datasettet i luftlinje. Konverter avstandene til km og legg dem i variabelen dest_CBD i kartet med husdata.</li>
-</ul>
-<p><strong>2. Last ned WADOH Environmental Health Disparities Index Calculated for King County</strong></p>
-<ul>
-<li>Les inn .shp filen WADOH King County.</li>
-<li>Plukk ut variablene angitt tidligere i oppgaven.</li>
-<li>Transponer kartet til projeksjonen EPSG:2926</li>
-<li>Lag inntektsvariabelen som beskrevet ovenfor. Legg disse til som nye variabler i WADOH King County.</li>
-<li>Last ned</li>
-<li>Last shape filene tracts10 fra censusSHP mappen (vær nøye med at dere velger 10 varianten)</li>
-<li>Bruk en <code>left_join()</code> for å få dataene fra WADOH King County inn i dette kartet.</li>
-<li>Transponer begge kartene til EPSG:2926</li>
-</ul>
+<p><strong>1. House Sales King County, USA fra Kaggle</strong></p>
+<p><strong>2. WADOH Environmental Health Disparities Index Calculated for King County</strong></p>
 <p><strong>3. Gjør en «spatial join» av husdata med tracts10</strong></p>
 <ul>
 <li>Sjekk områdevariablene fra WADOH vha. summary for tracts10</li>
