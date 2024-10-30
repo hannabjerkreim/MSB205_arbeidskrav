@@ -1,0 +1,113 @@
+---
+title: "Romlig analyse av boligpriser i King County"
+format: html
+editor: visual
+---
+
+```{r}
+#| label: setup
+#| echo: false
+#| output: false
+library(tidyverse)
+library(lubridate)
+library(sf)
+library(here)
+library(tmap)
+library(sp)
+library(spdep)
+library(spatialreg)
+library(lmtest)
+library(sandwich)
+library(units)
+library(car)
+library(foreign)
+# For tabeller
+library(flextable)
+library(modelsummary)
+```
+
+## Data
+
+**1. Last ned House Sales King County, USA fra Kaggle**
+
+-   Sjekk definisjonen på de ulike variablene
+-   Les .csv filen med *House Sales King County* inn i R
+-   Sorter salgene «descending» etter dato, siste først (dvs. mai 2015, april 2015 osv.)
+-   Bruk `dplyr::distinct()` til å velge siste salg der vi har multiple salg av samme eiendom.
+-   Bruk `st_as_sf()` til å konvertere house data til et sf objekt vha. long lat og sett til geografisk projeksjon, dvs EPSG:4326.
+-   Konverter dette sf objektet så til projeksjonen EPSG:2926.
+-   Bruk koordinatene fra Seattles wikipedia-side (øvre høyre hjørne, klikk linken så får dere koordinatene i desimal form) og sett dette punktet som CBD for Seattle.
+-   Konverter dette punktet til EPSG:2926. Finn avstanden mellom dette punktet og samtlige hus i datasettet i luftlinje. Konverter avstandene til km og legg dem i variabelen dest_CBD i kartet med husdata.
+
+**2. Last ned WADOH Environmental Health Disparities Index Calculated for King County**
+
+-   Les inn .shp filen WADOH King County.
+-   Plukk ut variablene angitt tidligere i oppgaven.
+-   Transponer kartet til projeksjonen EPSG:2926
+-   Lag inntektsvariabelen som beskrevet ovenfor. Legg disse til som nye variabler i WADOH King County.
+-   Last ned
+-   Last shape filene tracts10 fra censusSHP mappen (vær nøye med at dere velger 10 varianten)
+-   Bruk en `left_join()` for å få dataene fra WADOH King County inn i dette kartet.
+-   Transponer begge kartene til EPSG:2926
+
+**3. Gjør en «spatial join» av husdata med tracts10**
+
+-   Sjekk områdevariablene fra WADOH vha. summary for tracts10
+-   En observasjon fra tracts10 har bare NA for områdevariablene. Dropp denne.
+-   Lag en faktor-variabel av år og måned ut fra Date, kall den year_month.
+-   Lagre .gpkg filen for husdataene . (Sett opsjonen append=FALSE. Ellers får dere ikke lov til å overskrive filen.)
+
+## **Exploratory Data Analysis (EDA)**
+
+**4. Utfør EDA i GeoDA**
+
+-   Lag et nytt prosjekt i GeoDA
+-   Last inn husdataene via .gpkg filen lagret ovenfor
+-   Generer en vekt fil utfra 3 og 10 nærmeste naboer
+-   Prøv å finne ut hvor de små og dyre, de store og dyre, de billige og store og de små og billige boligene ligger (prøv Bivariate Morans I)
+-   Dere kan eventuelt også eksperimentere med innledene SAR, SEM og lm modeller i GeoDa
+
+**5. Returner så til Quatro dokumentet**
+
+-   Gi en kort sammenfatning av funnene fra EDA.
+
+## Hedoniske modeller
+
+-   Definer mint tre hedonske modeller. Ta utgangspunkt i Bishop et al. ([2020](https://msb205.netlify.app/assignment/kc_h24/assignment_text_24#ref-bishop2020)) og diskuter gjerne valgte modeller utfra denne.
+
+    1.  En null modell med bare huskarakteristika og tids-dummier (year_month).
+    2.  En modell med huskarakteristika, dist_CBD, relevante tract-variabler og tids-dummier.
+    3.  En modell med huskarakteristika, dist_CBD, EHD indeks (eventuelt inntektsvariabel) og tids-dummier.
+
+-   Rapporter de tre modellen i en regresjonstabell (se eksemplet med modelsummary() og flextable ovenfor). Bruk robuste standard errors. Rapporter t-verdien som er det vanligste innen økonometri.
+
+-   Test og diskuter hvilken modell som er best. (Ta gjerne også en titt på `plot(<lm_navnet>)`)
+
+**6. Simultan test på tids-dummiene**
+
+-   Bruk en simultan test på tids-dummiene for å avgjøre om vi trenger disse i modellen (`car::linearHypothesis()`) med opsjonen `white_adjust =` “hc3” eller “hc4” eller også eventuelt “hc1” hvis dere ønsker å bruke Stata sin default.
+
+## Romlige regresjoner
+
+**7. Spatial Regressions**
+
+-   Last gruppens utvalg fra relevant .gpkg fil (tallene er seed verdiene som er brukt for å genererer utvalgene)
+-   Legg områdevariablene til det reduserte datasettet.
+-   Formuler modellen dere vil bruke. Kjør den som lm (OLS) modell og bruk `lm.morantest()` og `moran.plot()` på residualene for å avgjøre om vi har *uforklarte spatial effects* i residualene.
+-   Modellen skal inneholde områdevariablene familie inntekt og variabelen som angir etnisitet (rase).
+-   Generer vektmatrise ut fra k=3 og k=10 nærmeste naboer
+-   Bruk Anselin ([1988](https://msb205.netlify.app/assignment/kc_h24/assignment_text_24#ref-Anselin1988)) sin teknikk med Lagrange Multiplikator test vha. `lm.LMtests()` og diskuter hvilken modell (SAR, SEM eller lm (OLS)) som synes å være den beste.
+-   Bruk så teknikken med nestede modeller anbefalt av LeSage ([n.d.](https://msb205.netlify.app/assignment/kc_h24/assignment_text_24#ref-lesage)). Diskuter først om vi står overfor et *lokalt* eller *globalt* fenomen. Bruk opsjonen `durban = as.formula(~ variabelnavnene du vil ha impacts for)`. Dette for å slippe impacts for tidsdummiene. Test så de nestede modellne vha. *likelihood ratio test*. Hvilken modell synes å være den beste?
+-   For alternativet k=10 (10 nærmeste naboer). Bruk `moran.plot()` på residualene fra de ulike modellene for å illustrere hvor godt hver modell fjerner «spatial effects» fra residualene.
+
+## Diskusjon av resultater
+
+**8. Diskusjon av resultatene**
+
+-   I denne oppgaven har dere estimert flere hedoniske prisfunksjoner. Hva er den økonomiske tolkningen av den hedoniske boligprismodellen? Bruk en grafisk presentasjon i svaret.
+-   Dere har estimert en OLS model, en spatial error model (SEM), en spatial lag model (SAR), en SLX modell og en spatial Durbin Error Model (SDEM). For hver av disse modellene skal dere tolke de estimerte koeffisientene. Dere kan bruke to estimerte koeffisienter i hver modell for denne oppgaven. Det vi er interessert i er det økonomiske innholdet i koeffisientene i lys av den hedoniske teorien.
+-   Er de estimerte koeffisientene dere har valgt å studere i hver modell signifikante og rimelige med hensyn til fortegn og størrelse?
+-   For SAR-modellen måp du bruke de estimerte virkningene (impacts) for å få et mål på de implisitte prisene.
+-   Bruk to estimerte impacts (direkte, indirekte og total impact knyttet til hver variabel), og gi en økonomisk tolkning av disse.
+
+## Konklusjon
