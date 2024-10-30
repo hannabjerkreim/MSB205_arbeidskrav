@@ -26,29 +26,195 @@ library(flextable)
 library(modelsummary)
 ```
 
+## Introduksjon
+
 ## Data
 
-**1. Last ned House Sales King County, USA fra Kaggle**
+**1. House Sales King County, USA fra Kaggle**
 
--   Sjekk definisjonen på de ulike variablene
--   Les .csv filen med *House Sales King County* inn i R
--   Sorter salgene «descending» etter dato, siste først (dvs. mai 2015, april 2015 osv.)
--   Bruk `dplyr::distinct()` til å velge siste salg der vi har multiple salg av samme eiendom.
--   Bruk `st_as_sf()` til å konvertere house data til et sf objekt vha. long lat og sett til geografisk projeksjon, dvs EPSG:4326.
--   Konverter dette sf objektet så til projeksjonen EPSG:2926.
--   Bruk koordinatene fra Seattles wikipedia-side (øvre høyre hjørne, klikk linken så får dere koordinatene i desimal form) og sett dette punktet som CBD for Seattle.
--   Konverter dette punktet til EPSG:2926. Finn avstanden mellom dette punktet og samtlige hus i datasettet i luftlinje. Konverter avstandene til km og legg dem i variabelen dest_CBD i kartet med husdata.
+```{r}
+#| echo: false
+#| output: false
+# Laste inn House Sales King County datasett
+kc_house_data <- read_csv("kc_house_data.csv")
+```
 
-**2. Last ned WADOH Environmental Health Disparities Index Calculated for King County**
+```{r}
+#| echo: false
+# Sorter salgene «descending» etter dato
+# Velge siste salg der vi har multiple salg av samme eiendom
+kc_house_data <- kc_house_data %>%
+  mutate(           
+    year = year(date),
+    month = month(date),
+    day = day(date)
+  ) %>%
+  arrange(desc(date)) %>%
+  distinct(id, .keep_all = TRUE)
+```
 
--   Les inn .shp filen WADOH King County.
--   Plukk ut variablene angitt tidligere i oppgaven.
--   Transponer kartet til projeksjonen EPSG:2926
--   Lag inntektsvariabelen som beskrevet ovenfor. Legg disse til som nye variabler i WADOH King County.
--   Last ned
--   Last shape filene tracts10 fra censusSHP mappen (vær nøye med at dere velger 10 varianten)
--   Bruk en `left_join()` for å få dataene fra WADOH King County inn i dette kartet.
--   Transponer begge kartene til EPSG:2926
+```{r}
+#| echo: false
+# Konvertere kc_house_data til et sf-objekt
+# Projeksjon: EPSG:4326
+kc_house_data <- kc_house_data %>%
+  st_as_sf(coords = c("long", "lat"), crs = 4326)
+```
+
+```{r}
+#| echo: false
+# Projeksjon: EPSG:2926
+kc_house_data <- st_transform(kc_house_data, crs = 2926)
+```
+
+```{r}
+#| echo: false
+# Opprette punkt for CBD i Seattle
+seattle_cbd <- st_point(c(-122.3321, 47.6062)) %>%
+  st_sfc(crs = 4326) %>%
+  st_transform(crs = 2926) # Projeksjon: EPSG:2926
+```
+
+```{r}
+#| echo: false
+# Finn avstanden fra CBD til hvert hus
+kc_house_data <- kc_house_data %>%
+  mutate(dist_cbd = set_units(st_distance(geometry, seattle_cbd), "km"))
+```
+
+```{r}
+# Ordne rekkefølge på variabler
+kc_house_data <- kc_house_data %>%
+  select(id, date, year, month, day, geometry, zipcode, price, dist_cbd, floors,
+         bedrooms, bathrooms, sqft_living, sqft_living15, sqft_lot, sqft_lot15,
+         sqft_above, sqft_basement, yr_built, yr_renovated, condition, grade, view,
+         waterfront )
+```
+
+**2. WADOH Environmental Health Disparities Index Calculated for King County**
+
+```{r}
+#| echo: false
+#| output: false
+# Laste inn WADOH King County datasett
+kc_wadoh_map <- st_read("WADOH_Environmental_Health_Disparities_Index_Calculated_for_King_County___wadohehdindex_area")
+```
+
+```{r}
+#| echo: false
+# Plukke ut variabler
+ kc_wadoh_map <- kc_wadoh_map %>% 
+  select(
+  GEO_ID_TRT,
+  EHD_percen,#Environmental Health Index, weighted score many vars
+  linguist_2,#Pop. age 5+ speaking English less than "very well"
+  poverty_pe,#Percentage people living in poverty
+  transporta,#% of income spent on transportation median family in tract
+  unemploy_2,#percentage unemployed
+  housing_pe,#% of households in group "Unaffordable Housing" (>30% inc.)
+  traffic_pe,#% of pop. near heavy traffic roadways
+  diesel,# nox consentration
+  ozone,# ozone consentration
+  PM25, # consentration of Particulate Matter in air
+  toxic_rele, # Toxic release from factories
+  hazardous_, # Hazardous Waste Treatment Storage and disposal Facilities
+  lead_perce, # measure of Lead paint in houses
+  superfund, # Proximity to contaminated sites on national list
+  facilities, # Proximity to Risk Management Plan Facilities
+  wastewater, # Proximity to wastewater facilities
+  sen_pop_pe, # % pop. over 65
+  socio_perc # score social economic determants, low best
+  )
+```
+
+```{r}
+#| echo: false
+# Projeksjon: EPSG:2926
+kc_wadoh_map <- st_transform(kc_wadoh_map, crs = 2926)
+```
+
+```{r}
+#| echo: false
+# Laste inn datasett for inntekt
+income <- read.dbf("acs_b19101_familyincome.dbf") %>%
+  select(-M19101153, - M19101152, - M19101151, - M19101150,- M19101149, - M19101148, -
+           M19101147,- M19101146, - M19101145, - M19101144,- M19101143, - M19101142, -
+           M19101141, - M19101140, - M19101139, - M19101138, - M19101137)
+
+# Gruppere inntekt: low, mid, high
+income <- income %>%
+  mutate(
+    # Lag nye kolonner for inntektsgruppene med ønskede navn
+    low = E19101138 +   # Less than $10,000
+          E19101139 +   # $10,000 to $14,999
+          E19101140 +   # $15,000 to $19,999
+          E19101141 +   # $20,000 to $24,999
+          E19101142 +   # $25,000 to $29,999
+          E19101143,    # $30,000 to $34,999
+    
+    mid = E19101144 +   # $35,000 to $39,999
+          E19101145 +   # $40,000 to $44,999
+          E19101146 +   # $45,000 to $49,999
+          E19101147 +   # $50,000 to $59,999
+          E19101148 +   # $60,000 to $74,999
+          E19101149,    # $75,000 to $99,999
+    
+    high = E19101150 +   # $100,000 to $124,999
+           E19101151 +   # $125,000 to $149,999
+           E19101152 +   # $150,000 to $199,999
+           E19101153     # $200,000 or more
+  ) %>%
+  select(GEOID, GEOIDTRT, TRACTLABEL, low, mid, high)
+```
+
+```{r}
+#| echo: false
+# Laste inn datasett for rase
+race <- read.dbf("acs_b02001_race.dbf") %>%
+  select(-M02001001, -M02001002, -M02001003, -M02001004, -M02001005, -M02001006,
+         -M02001007, -M02001008, -M02001009, -M02001010 )
+
+# Slå sammen variabler
+race <- race %>%
+  mutate(
+    total = E02001001,
+    hvit_alene = E02001002,
+    svart_alene = E02001003,
+    asiatisk_alene = E02001005,
+    andre_alene = E02001004 + E02001006 + E02001007,
+    blandet = E02001008 + E02001009 + E02001010
+  ) %>%
+  select(GEOID, GEOIDTRT, TRACTLABEL, total, hvit_alene, svart_alene, asiatisk_alene, 
+         andre_alene, blandet)
+
+# Beregne andeler
+race <- race %>%
+  mutate(
+    andel_hvit_alene = hvit_alene / total,
+    andel_svart_alene = svart_alene / total,
+    andel_asiatisk_alene = asiatisk_alene / total,
+    andel_andre_alene = andre_alene / total,
+    andel_blandet = blandet / total
+  ) %>%
+  select(GEOID, GEOIDTRT, TRACTLABEL,
+         andel_hvit_alene, andel_svart_alene,
+         andel_asiatisk_alene, andel_andre_alene,
+         andel_blandet)
+```
+
+```{r}
+#| echo: false
+# Laste inn tracts10 datasett
+tracts10 <- st_read("tracts10")
+```
+
+```{r}
+# Left join for å få dataene fra WADOH King County inn i dette kartet.
+```
+
+```{r}
+# Projeksjon: EPSG:2926
+```
 
 **3. Gjør en «spatial join» av husdata med tracts10**
 
@@ -74,20 +240,17 @@ library(modelsummary)
 ## Hedoniske modeller
 
 -   Definer mint tre hedonske modeller. Ta utgangspunkt i Bishop et al. ([2020](https://msb205.netlify.app/assignment/kc_h24/assignment_text_24#ref-bishop2020)) og diskuter gjerne valgte modeller utfra denne.
-
     1.  En null modell med bare huskarakteristika og tids-dummier (year_month).
     2.  En modell med huskarakteristika, dist_CBD, relevante tract-variabler og tids-dummier.
     3.  En modell med huskarakteristika, dist_CBD, EHD indeks (eventuelt inntektsvariabel) og tids-dummier.
-
 -   Rapporter de tre modellen i en regresjonstabell (se eksemplet med modelsummary() og flextable ovenfor). Bruk robuste standard errors. Rapporter t-verdien som er det vanligste innen økonometri.
-
 -   Test og diskuter hvilken modell som er best. (Ta gjerne også en titt på `plot(<lm_navnet>)`)
 
 **6. Simultan test på tids-dummiene**
 
 -   Bruk en simultan test på tids-dummiene for å avgjøre om vi trenger disse i modellen (`car::linearHypothesis()`) med opsjonen `white_adjust =` “hc3” eller “hc4” eller også eventuelt “hc1” hvis dere ønsker å bruke Stata sin default.
 
-## Romlige regresjoner
+## Spatial Regressions
 
 **7. Spatial Regressions**
 
