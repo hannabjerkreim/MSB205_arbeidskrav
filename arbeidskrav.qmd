@@ -30,6 +30,8 @@ library(modelsummary)
 
 **1. House Sales King County, USA fra Kaggle**
 
+ny tekst
+
 ```{r}
 #| echo: false
 #| output: false
