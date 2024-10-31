@@ -36,7 +36,7 @@ ny tekst
 #| echo: false
 #| output: false
 # Laste inn House Sales King County datasett
-kc_house_data <- read_csv("kc_house_data.csv")
+kc_house_data <- read_csv("MandD/kc_house_data.csv")
 ```
 
 ```{r}
@@ -98,7 +98,7 @@ kc_house_data <- kc_house_data %>%
 #| echo: false
 #| output: false
 # Laste inn WADOH King County datasett
-kc_wadoh_map <- st_read("WADOH_Environmental_Health_Disparities_Index_Calculated_for_King_County___wadohehdindex_area")
+kc_wadoh_map <- st_read("MandD/WADOH_Environmental_Health_Disparities_Index_Calculated_for_King_County___wadohehdindex_area")
 ```
 
 ```{r}
@@ -137,7 +137,7 @@ kc_wadoh_map <- st_transform(kc_wadoh_map, crs = 2926)
 ```{r}
 #| echo: false
 # Laste inn datasett for inntekt
-income <- read.dbf("acs_b19101_familyincome.dbf") %>%
+income <- read.dbf("MandD/acs_b19101_familyincome.dbf") %>%
   select(-M19101153, - M19101152, - M19101151, - M19101150,- M19101149, - M19101148, -
            M19101147,- M19101146, - M19101145, - M19101144,- M19101143, - M19101142, -
            M19101141, - M19101140, - M19101139, - M19101138, - M19101137)
@@ -171,7 +171,7 @@ income <- income %>%
 ```{r}
 #| echo: false
 # Laste inn datasett for rase
-race <- read.dbf("acs_b02001_race.dbf") %>%
+race <- read.dbf("MandD/acs_b02001_race.dbf") %>%
   select(-M02001001, -M02001002, -M02001003, -M02001004, -M02001005, -M02001006,
          -M02001007, -M02001008, -M02001009, -M02001010 )
 
@@ -217,7 +217,7 @@ kc_wadoh_map <- kc_wadoh_map %>%
 #| echo: false
 #| output: false
 # Laste inn tracts10 datasett
-tracts10 <- st_read("tracts10") %>%
+tracts10 <- st_read("MandD/tracts10") %>%
   rename("GEOIDTRT" = "GEO_ID_TRT")
 ```
 
@@ -504,7 +504,7 @@ Dette betyr at tidsvariasjon er viktig for å modellere boligprisene i dette dat
 Vår guppe sitt datasett
 
 ```{r}
-data <- st_read("kc_house_data_4242.gpkg")
+data <- st_read("MandD/kc_house_data_4242.gpkg")
 ```
 
 ```{r}
