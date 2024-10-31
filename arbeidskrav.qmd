@@ -215,10 +215,17 @@ kc_wadoh_map <- kc_wadoh_map %>%
 #| echo: false
 #| output: false
 # Laste inn tracts10 datasett
-tracts10 <- st_read("tracts10")
+tracts10 <- st_read("tracts10") %>%
+  rename("GEOIDTRT" = "GEO_ID_TRT")
+```
+
+```{r}
+tracts10 <- tracts10 %>%
+  left_join(kc_wadoh_map, by = "GEOIDTRT")
 ```
 
 -   Bruk en `left_join()` for å få dataene fra WADOH King County inn i dette kartet.
+
 -   Transponer begge kartene til EPSG:2926
 
 **3. Gjør en «spatial join» av husdata med tracts10**
