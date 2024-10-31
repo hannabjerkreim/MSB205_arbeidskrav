@@ -234,10 +234,31 @@ kc_house_data <- st_transform(kc_house_data, crs = 2926)
 
 **3. Gjør en «spatial join» av husdata med tracts10**
 
--   Sjekk områdevariablene fra WADOH vha. summary for tracts10
--   En observasjon fra tracts10 har bare NA for områdevariablene. Dropp denne.
--   Lag en faktor-variabel av år og måned ut fra Date, kall den year_month.
--   Lagre .gpkg filen for husdataene . (Sett opsjonen append=FALSE. Ellers får dere ikke lov til å overskrive filen.)
+```{r}
+# Spatial join mellom husdata og tracts10
+tracts10_join <- st_join(kc_house_data, tracts10)
+```
+
+```{r}
+# Sjekk områdevariablene i tracts10
+summary(tracts10_join)
+```
+
+```{r}
+# Fjerner observasjoner med NA-verdier i områdevariablene
+tracts10_join <- na.omit(tracts10_join)
+```
+
+```{r}
+# Lag year_month som en faktor-variabel
+tracts10_join <- tracts10_join %>%
+  mutate(year_month = as.factor(format(date, "%Y-%m")))
+```
+
+```{r}
+# Lagre som .gpkg
+st_write(tracts10_join, "house_data.gpkg", append=FALSE)
+```
 
 ## **Exploratory Data Analysis (EDA)**
 
