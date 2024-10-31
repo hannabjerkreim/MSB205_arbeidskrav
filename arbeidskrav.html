@@ -20,6 +20,40 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -66,17 +100,195 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="data">Data</h2>
 <p><strong>1. House Sales King County, USA fra Kaggle</strong></p>
 <p><strong>2. WADOH Environmental Health Disparities Index Calculated for King County</strong></p>
-<ul>
-<li>Bruk en <code>left_join()</code> for å få dataene fra WADOH King County inn i dette kartet.</li>
-<li>Transponer begge kartene til EPSG:2926</li>
-</ul>
 <p><strong>3. Gjør en «spatial join» av husdata med tracts10</strong></p>
-<ul>
-<li>Sjekk områdevariablene fra WADOH vha. summary for tracts10</li>
-<li>En observasjon fra tracts10 har bare NA for områdevariablene. Dropp denne.</li>
-<li>Lag en faktor-variabel av år og måned ut fra Date, kall den year_month.</li>
-<li>Lagre .gpkg filen for husdataene . (Sett opsjonen append=FALSE. Ellers får dere ikke lov til å overskrive filen.)</li>
-</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Spatial join mellom husdata og tracts10</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>tracts10_join <span class="ot">&lt;-</span> <span class="fu">st_join</span>(kc_house_data, tracts10)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sjekk områdevariablene i tracts10</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(tracts10_join)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      id                 date                             year     
+ Length:21436       Min.   :2014-05-02 00:00:00.00   Min.   :2014  
+ Class :character   1st Qu.:2014-07-22 00:00:00.00   1st Qu.:2014  
+ Mode  :character   Median :2014-10-17 00:00:00.00   Median :2014  
+                    Mean   :2014-10-29 17:30:02.34   Mean   :2014  
+                    3rd Qu.:2015-02-18 00:00:00.00   3rd Qu.:2015  
+                    Max.   :2015-05-27 00:00:00.00   Max.   :2015  
+                                                                   
+     month             day                 geometry        zipcode     
+ Min.   : 1.000   Min.   : 1.00   POINT        :21436   Min.   :98001  
+ 1st Qu.: 4.000   1st Qu.: 8.00   epsg:2926    :    0   1st Qu.:98033  
+ Median : 6.000   Median :16.00   +proj=lcc ...:    0   Median :98065  
+ Mean   : 6.564   Mean   :15.69                         Mean   :98078  
+ 3rd Qu.: 9.000   3rd Qu.:23.00                         3rd Qu.:98117  
+ Max.   :12.000   Max.   :31.00                         Max.   :98199  
+                                                                       
+     price            dist_cbd.V1         floors         bedrooms     
+ Min.   :  75000   Min.   : 0.98600   Min.   :1.000   Min.   : 0.000  
+ 1st Qu.: 324866   1st Qu.: 9.78459   1st Qu.:1.000   1st Qu.: 3.000  
+ Median : 450000   Median :16.54715   Median :1.500   Median : 3.000  
+ Mean   : 541650   Mean   :18.48321   Mean   :1.496   Mean   : 3.372  
+ 3rd Qu.: 645000   3rd Qu.:25.32035   3rd Qu.:2.000   3rd Qu.: 4.000  
+ Max.   :7700000   Max.   :77.31409   Max.   :3.500   Max.   :33.000  
+                                                                      
+   bathrooms      sqft_living    sqft_living15     sqft_lot      
+ Min.   :0.000   Min.   :  290   Min.   : 399   Min.   :    520  
+ 1st Qu.:1.750   1st Qu.: 1430   1st Qu.:1490   1st Qu.:   5040  
+ Median :2.250   Median : 1920   Median :1840   Median :   7614  
+ Mean   :2.117   Mean   : 2083   Mean   :1988   Mean   :  15136  
+ 3rd Qu.:2.500   3rd Qu.: 2550   3rd Qu.:2370   3rd Qu.:  10696  
+ Max.   :8.000   Max.   :13540   Max.   :6210   Max.   :1651359  
+                                                                 
+   sqft_lot15       sqft_above   sqft_basement       yr_built   
+ Min.   :   651   Min.   : 290   Min.   :   0.0   Min.   :1900  
+ 1st Qu.:  5100   1st Qu.:1200   1st Qu.:   0.0   1st Qu.:1952  
+ Median :  7620   Median :1560   Median :   0.0   Median :1975  
+ Mean   : 12786   Mean   :1791   Mean   : 291.7   Mean   :1971  
+ 3rd Qu.: 10087   3rd Qu.:2220   3rd Qu.: 560.0   3rd Qu.:1997  
+ Max.   :871200   Max.   :9410   Max.   :4820.0   Max.   :2015  
+                                                                
+  yr_renovated       condition        grade             view       
+ Min.   :   0.00   Min.   :1.00   Min.   : 1.000   Min.   :0.0000  
+ 1st Qu.:   0.00   1st Qu.:3.00   1st Qu.: 7.000   1st Qu.:0.0000  
+ Median :   0.00   Median :3.00   Median : 7.000   Median :0.0000  
+ Mean   :  84.73   Mean   :3.41   Mean   : 7.662   Mean   :0.2351  
+ 3rd Qu.:   0.00   3rd Qu.:4.00   3rd Qu.: 8.000   3rd Qu.:0.0000  
+ Max.   :2015.00   Max.   :5.00   Max.   :13.000   Max.   :4.0000  
+                                                                   
+   waterfront         GEOIDTRT           FEATURE_ID     TRACT_LBL        
+ Min.   :0.000000   Length:21436       Min.   :10153   Length:21436      
+ 1st Qu.:0.000000   Class :character   1st Qu.:34396   Class :character  
+ Median :0.000000   Mode  :character   Median :44673   Mode  :character  
+ Mean   :0.007604                      Mean   :38114                     
+ 3rd Qu.:0.000000                      3rd Qu.:45279                     
+ Max.   :1.000000                      Max.   :45837                     
+                                       NA's   :1                         
+  TRACT_STR           TRACT_INT       TRACT_FLT      TRACT_DEL        
+ Length:21436       Min.   :  100   Min.   :  1.0   Length:21436      
+ Class :character   1st Qu.:10402   1st Qu.:104.0   Class :character  
+ Mode  :character   Median :24702   Median :247.0   Mode  :character  
+                    Mean   :21222   Mean   :212.2                     
+                    3rd Qu.:31202   3rd Qu.:312.0                     
+                    Max.   :32800   Max.   :328.0                     
+                    NA's   :1       NA's   :1                         
+  TRTLABEL_F         TRTLABEL_C         TRTLABEL_T         COUNTY_STR       
+ Length:21436       Length:21436       Length:21436       Length:21436      
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+   COUNTY_INT  STATE_STR           STATE_INT    LEVEL_1         
+ Min.   :33   Length:21436       Min.   :53   Length:21436      
+ 1st Qu.:33   Class :character   1st Qu.:53   Class :character  
+ Median :33   Mode  :character   Median :53   Mode  :character  
+ Mean   :33                      Mean   :53                     
+ 3rd Qu.:33                      3rd Qu.:53                     
+ Max.   :33                      Max.   :53                     
+ NA's   :1                       NA's   :1                      
+   LEVEL_2            LEVEL_3            TRACT_AREA          TRACT_PERI    
+ Length:21436       Length:21436       Min.   :2.792e+06   Min.   :  8012  
+ Class :character   Class :character   1st Qu.:2.485e+07   1st Qu.: 23500  
+ Mode  :character   Mode  :character   Median :4.124e+07   Median : 32920  
+                                       Mean   :1.808e+08   Mean   : 48215  
+                                       3rd Qu.:7.308e+07   3rd Qu.: 47962  
+                                       Max.   :1.526e+10   Max.   :738820  
+                                       NA's   :1           NA's   :1       
+   LOGRECNO           Shape_area          Shape_len        EHD_percen    
+ Length:21436       Min.   :2.792e+06   Min.   :  8012   Min.   :  1.00  
+ Class :character   1st Qu.:2.485e+07   1st Qu.: 23500   1st Qu.: 19.00  
+ Mode  :character   Median :4.124e+07   Median : 32920   Median : 41.00  
+                    Mean   :1.808e+08   Mean   : 48215   Mean   : 43.63  
+                    3rd Qu.:7.308e+07   3rd Qu.: 47962   3rd Qu.: 67.00  
+                    Max.   :1.526e+10   Max.   :738820   Max.   :100.00  
+                    NA's   :1           NA's   :1        NA's   :1       
+   linguist_2       poverty_pe      transporta      unemploy_2    
+ Min.   : 0.450   Min.   : 1.97   Min.   :12.00   Min.   : 1.000  
+ 1st Qu.: 3.120   1st Qu.: 8.93   1st Qu.:18.00   1st Qu.: 3.230  
+ Median : 7.000   Median :13.60   Median :20.00   Median : 4.310  
+ Mean   : 9.004   Mean   :16.65   Mean   :19.77   Mean   : 4.774  
+ 3rd Qu.:12.730   3rd Qu.:22.95   3rd Qu.:21.00   3rd Qu.: 6.050  
+ Max.   :40.350   Max.   :75.48   Max.   :26.00   Max.   :13.620  
+ NA's   :196      NA's   :1       NA's   :1       NA's   :78      
+   housing_pe      traffic_pe        diesel          ozone      
+ Min.   :15.14   Min.   : 0.00   Min.   : 0.14   Min.   :46.73  
+ 1st Qu.:25.66   1st Qu.: 0.00   1st Qu.: 5.60   1st Qu.:49.24  
+ Median :30.46   Median : 0.10   Median :10.16   Median :49.97  
+ Mean   :31.37   Mean   :11.52   Mean   :13.67   Mean   :51.17  
+ 3rd Qu.:35.73   3rd Qu.:19.14   3rd Qu.:16.88   3rd Qu.:52.32  
+ Max.   :64.87   Max.   :84.98   Max.   :92.63   Max.   :62.89  
+ NA's   :1       NA's   :1       NA's   :1       NA's   :1      
+      PM25         toxic_rele         hazardous_        lead_perce   
+ Min.   :3.787   Min.   :   823.9   Min.   :0.02303   Min.   : 0.24  
+ 1st Qu.:5.488   1st Qu.:  4143.8   1st Qu.:0.03985   1st Qu.: 5.34  
+ Median :6.044   Median :  8750.6   Median :0.05160   Median :11.99  
+ Mean   :6.002   Mean   : 17245.8   Mean   :0.07407   Mean   :16.60  
+ 3rd Qu.:6.579   3rd Qu.: 17237.2   3rd Qu.:0.07891   3rd Qu.:26.48  
+ Max.   :7.897   Max.   :186434.6   Max.   :0.63781   Max.   :54.68  
+ NA's   :1       NA's   :1          NA's   :1         NA's   :1      
+   superfund         facilities       wastewater          sen_pop_pe    
+ Min.   :0.03454   Min.   :0.0523   Min.   :0.0000000   Min.   :  1.00  
+ 1st Qu.:0.06595   1st Qu.:0.1420   1st Qu.:0.0000026   1st Qu.: 25.00  
+ Median :0.11046   Median :0.2680   Median :0.0002900   Median : 48.00  
+ Mean   :0.21695   Mean   :0.5246   Mean   :0.0161550   Mean   : 48.09  
+ 3rd Qu.:0.23841   3rd Qu.:0.7588   3rd Qu.:0.0029000   3rd Qu.: 71.00  
+ Max.   :1.46778   Max.   :3.3682   Max.   :0.6400000   Max.   :100.00  
+ NA's   :1         NA's   :1        NA's   :1           NA's   :1       
+   socio_perc                      GEOID      
+ Min.   :  1.00   1400000US53033032602:  286  
+ 1st Qu.: 20.00   1400000US53033032210:  236  
+ Median : 43.00   1400000US53033032329:  145  
+ Mean   : 44.51   1400000US53033005600:  134  
+ 3rd Qu.: 67.00   1400000US53033032203:  134  
+ Max.   :100.00   (Other)             :20500  
+ NA's   :1        NA's                :    1  
+                                        TRACTLABEL      low_income   
+ Census Tract 326.02, King County, Washington:  286   Min.   :  5.0  
+ Census Tract 322.10, King County, Washington:  236   1st Qu.: 67.0  
+ Census Tract 323.29, King County, Washington:  145   Median :102.0  
+ Census Tract 322.03, King County, Washington:  134   Mean   :144.6  
+ Census Tract 56, King County, Washington    :  134   3rd Qu.:191.0  
+ (Other)                                     :20500   Max.   :756.0  
+ NA's                                        :    1   NA's   :1      
+   mid_income      high_income     andel_hvit_alene  andel_svart_alene 
+ Min.   :  58.0   Min.   :  17.0   Min.   :0.09381   Min.   :0.000000  
+ 1st Qu.: 309.0   1st Qu.: 573.0   1st Qu.:0.57875   1st Qu.:0.007754  
+ Median : 422.0   Median : 813.0   Median :0.71575   Median :0.021700  
+ Mean   : 462.8   Mean   : 927.9   Mean   :0.68772   Mean   :0.051234  
+ 3rd Qu.: 590.0   3rd Qu.:1200.0   3rd Qu.:0.82493   3rd Qu.:0.066730  
+ Max.   :1349.0   Max.   :3135.0   Max.   :0.96698   Max.   :0.354851  
+ NA's   :1        NA's   :1        NA's   :1         NA's   :1         
+ andel_asiatisk_alene andel_andre_alene andel_blandet      
+ Min.   :0.001585     Min.   :0.00000   Min.   :0.0003978  
+ 1st Qu.:0.075033     1st Qu.:0.01026   1st Qu.:0.0831379  
+ Median :0.124285     Median :0.02144   Median :0.1133050  
+ Mean   :0.159030     Mean   :0.04178   Mean   :0.1204632  
+ 3rd Qu.:0.222871     3rd Qu.:0.05490   3rd Qu.:0.1519812  
+ Max.   :0.625245     Max.   :0.39761   Max.   :0.4359673  
+ NA's   :1            NA's   :1         NA's   :1          </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fjerner observasjoner med NA-verdier i områdevariablene</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>tracts10_join <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(tracts10_join)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lag year_month som en faktor-variabel</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>tracts10_join <span class="ot">&lt;-</span> tracts10_join <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year_month =</span> <span class="fu">as.factor</span>(<span class="fu">format</span>(date, <span class="st">"%Y-%m"</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Lagre som .gpkg</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">st_write</span>(tracts10_join, <span class="st">"house_data.gpkg"</span>, <span class="at">append=</span><span class="cn">FALSE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Deleting layer `house_data' using driver `GPKG'
+Writing layer `house_data' to data source `house_data.gpkg' using driver `GPKG'
+Writing 21200 features with 74 fields and geometry type Point.</code></pre>
+</div>
+</div>
 </section>
 <section id="exploratory-data-analysis-eda" class="level2">
 <h2 class="anchored" data-anchor-id="exploratory-data-analysis-eda"><strong>Exploratory Data Analysis (EDA)</strong></h2>
