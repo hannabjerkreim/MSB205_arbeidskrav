@@ -276,9 +276,11 @@ st_write(tracts10_join, "house_data.gpkg", append=FALSE)
 
 **Sammenligning av Moran’s I-verdier**
 
-	•	For vektor3 (de 3 nærmeste naboene) er **Moran’s I** = 0.406.
+```         
+•   For vektor3 (de 3 nærmeste naboene) er **Moran’s I** = 0.406.
 
-	•	For vektor10 (de 10 nærmeste naboene) er **Moran’s I** = 0.353.
+•   For vektor10 (de 10 nærmeste naboene) er **Moran’s I** = 0.353.
+```
 
 **Tolkning**: Begge Moran’s I-verdiene er positive, noe som indikerer en positiv romlig autokorrelasjon.
 Dette betyr at det er en tendens for høye prisverdier å være assosiert med høye verdier for boligareal (og tilsvarende for lave verdier).
@@ -302,42 +304,71 @@ Dette kan reflektere “hot spots” hvor dyre og store boliger samles.
 
 **1. Små og Dyre Boliger**
 
-	•	**Vektor3 (3 nærmeste naboer)**: Med vektor3 ser vi en sterkere autokorrelasjon.
+```         
+•   **Vektor3 (3 nærmeste naboer)**: Med vektor3 ser vi en sterkere autokorrelasjon.
+```
+
 Små og dyre boliger vil sannsynligvis ligge i områder hvor prisene er høye til tross for mindre boligareal, og disse vil være geografisk konsentrert rundt spesifikke, mindre nabolag.
 
-	•	**Vektor10 (10 nærmeste naboer)**: Med vektor10 ser vi en noe svakere romlig autokorrelasjon.
+```         
+•   **Vektor10 (10 nærmeste naboer)**: Med vektor10 ser vi en noe svakere romlig autokorrelasjon.
+```
+
 Dette antyder at de små, dyre boligene er mindre konsentrert på en større skala.
 Dette kan bety at små og dyre boliger er litt mer spredt utover større områder, men finnes fortsatt i visse høyprissegmenter.
 
 **2. Store og Dyre Boliger**
 
-	•	**Vektor3**: Store og dyre boliger vil vises som områder hvor både pris og boligareal er høyt, og vi ser at dette er mer lokalt konsentrert når vi bruker vektor3.
+```         
+•   **Vektor3**: Store og dyre boliger vil vises som områder hvor både pris og boligareal er høyt, og vi ser at dette er mer lokalt konsentrert når vi bruker vektor3.
+```
+
 Slike “hot spots” for store, dyre boliger indikerer at visse luksuriøse nabolag kan være romlig nær hverandre.
 
-	•	**Vektor10**: Når vi øker skalaen til de 10 nærmeste naboene, vil noen av disse dyre og store boligene fortsatt være romlig konsentrert, men det viser en mer utvidet sammenheng, som kan bety at områder med store og dyre boliger strekker seg over flere nabolag i regionen.
+```         
+•   **Vektor10**: Når vi øker skalaen til de 10 nærmeste naboene, vil noen av disse dyre og store boligene fortsatt være romlig konsentrert, men det viser en mer utvidet sammenheng, som kan bety at områder med store og dyre boliger strekker seg over flere nabolag i regionen.
+```
 
 **3. Billige og Store Boliger**
 
-	•	**Vektor3**: Med vektor3 vil store, men rimelige boliger trolig ligge i spesifikke områder hvor store boliger finnes, men med lavere prisnivåer.
+```         
+•   **Vektor3**: Med vektor3 vil store, men rimelige boliger trolig ligge i spesifikke områder hvor store boliger finnes, men med lavere prisnivåer.
+```
+
 Disse kan være lokalisert i utkanter eller mindre ettertraktede områder, hvor arealet er stort, men etterspørselen er lavere.
 
-	•	**Vektor10**: Når du ser på vektor10, kan disse billige og store boligene være mer spredt og ikke nødvendigvis konsentrert.
+```         
+•   **Vektor10**: Når du ser på vektor10, kan disse billige og store boligene være mer spredt og ikke nødvendigvis konsentrert.
+```
+
 Dette antyder at når vi går til større skalaer, finnes det flere områder med billige, store boliger som kan spre seg over flere nabolag eller ligger i mer spredte områder.
 
 **4. Små og Billige Boliger**
 
-	•	**Vektor3**: Små og billige boliger er mest sannsynlig geografisk konsentrert i visse områder med lave priser og mindre boliger.
+```         
+•   **Vektor3**: Små og billige boliger er mest sannsynlig geografisk konsentrert i visse områder med lave priser og mindre boliger.
+```
+
 Dette kan være områder med tettere bebyggelse eller mindre attraktive boliger, som kan indikere mindre nabolag med lav etterspørsel.
 
-	•	**Vektor10**: Når vi øker skalaen til de 10 nærmeste naboene, vil disse små, billige boligene trolig finnes i mer spredte eller blandede områder.
+```         
+•   **Vektor10**: Når vi øker skalaen til de 10 nærmeste naboene, vil disse små, billige boligene trolig finnes i mer spredte eller blandede områder.
+```
+
 Vi ser at pris og størrelse fremdeles viser en positiv korrelasjon, men på en litt bredere geografisk skala, noe som kan indikere at små og rimelige boliger finnes i en bredere del av regionen.
 
 **Oppsummering:**
 
-	•	**Lokal konsentrasjon med** vektor3: Når vi ser på de 3 nærmeste naboene, får vi et tydeligere bilde av lokale “hot spots” og “cold spots” for hver av boligtypene.
+```         
+•   **Lokal konsentrasjon med** vektor3: Når vi ser på de 3 nærmeste naboene, får vi et tydeligere bilde av lokale “hot spots” og “cold spots” for hver av boligtypene.
+```
+
 Dette betyr at små og dyre, store og dyre, store og billige, og små og billige boliger er mer lokalt konsentrert.
 
-	•	**Mer spredt mønster med** vektor10: Når vi inkluderer de 10 nærmeste naboene, ser vi at mønstrene for boligtypene blir mer spredt.
+```         
+•   **Mer spredt mønster med** vektor10: Når vi inkluderer de 10 nærmeste naboene, ser vi at mønstrene for boligtypene blir mer spredt.
+```
+
 Dette antyder at mønstrene ikke er like sterke på en større skala, og at ulike boligtyper kan finnes i flere ulike områder over et bredere geografisk område.
 
 ## Hedoniske modeller
@@ -399,11 +430,13 @@ plot(model3)  # Modell 3
 
 Etter å ha analysert R-squared, AIC/BIC, og residualplott, kan du diskutere hvilken modell som er best ut fra følgende:
 
-	•	**Forklaringskraft**: Har modellen høy R-squared eller justert R-squared?
+```         
+•   **Forklaringskraft**: Har modellen høy R-squared eller justert R-squared?
 
-	•	**Kompleksitet vs. ytelse**: Gir AIC/BIC-resultatene en god balanse mellom kompleksitet og nøyaktighet?
+•   **Kompleksitet vs. ytelse**: Gir AIC/BIC-resultatene en god balanse mellom kompleksitet og nøyaktighet?
 
-	•	**Residualplott**: Viser modellen tegn til systematiske feil eller uteliggere?
+•   **Residualplott**: Viser modellen tegn til systematiske feil eller uteliggere?
+```
 
 **6. Simultan test på tids-dummiene**
 
@@ -428,27 +461,33 @@ print(test_result3)
 
 **Model 1**
 
-	•	**F-verdi**: 5.717
+```         
+•   **F-verdi**: 5.717
 
-	•	**p-verdi**: 6.082e-10 (som er ekstremt lav, mindre enn 0.001)
+•   **p-verdi**: 6.082e-10 (som er ekstremt lav, mindre enn 0.001)
+```
 
 For Model 1 indikerer den lave p-verdien (p \< 0.001) at vi kan avvise nullhypotesen om at alle tids-dummiene samlet er lik null.
 Dette betyr at tids-dummiene har en signifikant effekt på modellens forklaringskraft, og de bør inkluderes i modellen.
 
 **Model 2**
 
-	•	**F-verdi**: 8.2016
+```         
+•   **F-verdi**: 8.2016
 
-	•	**p-verdi**: 1.245e-15 (også ekstremt lav)
+•   **p-verdi**: 1.245e-15 (også ekstremt lav)
+```
 
 I Model 2 er p-verdien også svært lav, noe som igjen betyr at vi kan avvise nullhypotesen.
 Tids-dummiene har en signifikant effekt på boligprisene i denne modellen og bør beholdes.
 
 **Model 3**
 
-	•	**F-verdi**: 9.1943
+```         
+•   **F-verdi**: 9.1943
 
-	•	**p-verdi**: \< 2.2e-16 (enda lavere enn de to foregående modellene)
+•   **p-verdi**: \< 2.2e-16 (enda lavere enn de to foregående modellene)
+```
 
 For Model 3 er resultatet det samme: den lave p-verdien indikerer at tids-dummiene er signifikante for å forklare variasjonen i boligprisene, og derfor bør tids-dummiene inkluderes i modellen.
 
@@ -536,7 +575,8 @@ Samlet sett peker Lagrange Multiplikator-testene mot at en **Spatial Error Model
 En SEM-modell vil kunne håndtere den observerte spatial avhengigheten ved å modellere romlige effekter i feilkomponenten, noe som sannsynligvis gir en bedre forståelse og kontroll av romlige mønstre i boligprisene enn en SAR- eller OLS-modell ville ha gjort.
 
 ### 
-Lokal eller global? 
+
+Lokal eller global?
 
 Husk å forklar hvorfor det er lokal .....
 
@@ -613,26 +653,41 @@ moran.plot(residuals_slx, listw = lw10, main = "Moran's I for SLX-residualer (k=
 For å evaluere hvor godt de ulike modellene (OLS, SEM, SAR, SDEM og SLX) håndterer spatial autokorrelasjon i boligprisdataene, har vi benyttet **Moran’s I-plot** på residualene fra hver modell med k=10 nærmeste naboer.
 Moran-plottene gir oss innsikt i hvorvidt modellene klarer å fjerne romlige effekter fra residualene og dermed oppnå en modelltilpasning som ikke er påvirket av spatial autokorrelasjon.
 
-	1.	
+```         
+1.  
+```
+
 **OLS-modellen**: Plotet for OLS-residualene viser vanligvis en sterk spatial autokorrelasjon, ofte synlig som en høy tetthet av punkter i øvre høyre og nedre venstre kvadrant.
 Dette tyder på at det er en klar romlig avhengighet i dataene som enkle lineære modeller ikke klarer å fjerne.
 Dette bekrefter behovet for en spatial modell, da romlige effekter fremdeles er tilstede i OLS-residualene.
 
-	2.	
+```         
+2.  
+```
+
 **SEM-modellen (Spatial Error Model)**: SEM-modellen reduserer ofte spatial autokorrelasjon i residualene sammenlignet med OLS.
 I Moran-plottet for SEM-residualene er punktene jevnere fordelt, men det kan fortsatt være noen tendenser til spatial autokorrelasjon.
 SEM-modellen tar hensyn til romlig avhengighet i feilkomponenten, noe som hjelper med å fjerne en del av de spatial effektene, men den er kanskje ikke tilstrekkelig for å eliminere dem helt.
 
-	3.	
+```         
+3.  
+```
+
 **SAR-modellen (Spatial Lag Model)**: Moran-plottet for SAR-residualene viser vanligvis en ytterligere reduksjon i spatial autokorrelasjon, ettersom SAR-modellen tar hensyn til spatial avhengighet i den avhengige variabelen (boligprisene) direkte.
 Dette kan føre til en bedre fordeling av punktene rundt null i Moran-plottet, men enkelte spatial effekter kan fortsatt være tilstede.
 
-	4.	
+```         
+4.  
+```
+
 **SDEM-modellen (Spatial Durbin Error Model)**: For SDEM-modellen viser Moran-plottet ofte de mest spredte punktene rundt null, som indikerer at både direkte og indirekte romlige effekter blir håndtert på en effektiv måte.
 SDEM inkluderer både laggede verdier av uavhengige variabler og spatialt avhengige feil, noe som gjør modellen til et robust alternativ når det gjelder å håndtere romlige effekter.
 Dette plotet kan vise lavest grad av spatial autokorrelasjon, og indikerer at SDEM har høy modelltilpasning uten påvirkning fra romlige effekter.
 
-	5.	
+```         
+5.  
+```
+
 **SLX-modellen (Spatial Lag of X)**: SLX-modellen adresserer også romlige effekter gjennom laggede uavhengige variabler, men ikke gjennom den avhengige variabelen.
 Moran-plottet for SLX-modellen viser ofte en viss reduksjon i spatial autokorrelasjon sammenlignet med OLS, men den kan være mindre effektiv enn SAR- eller SDEM-modellene.
 Dette kan skyldes at SLX ikke fanger opp alle spatialt betingede forhold som påvirker boligprisene, spesielt når de involverer den avhengige variabelen direkte.
@@ -670,42 +725,65 @@ For hver modell tolker vi to utvalgte koeffisienter (f.eks., sqft_living og ande
 
 **1. OLS-modellen**
 
-	•	**Koeffisient for** sqft_living: Den positive koeffisienten indikerer at større boliger er assosiert med høyere priser.
+```         
+•   **Koeffisient for** sqft_living: Den positive koeffisienten indikerer at større boliger er assosiert med høyere priser.
+```
+
 Dette er rimelig, ettersom boligkjøpere vanligvis verdsetter større areal.
 Signifikansen av denne koeffisienten bekrefter at boligstørrelse er en viktig faktor.
 
-	•	**Koeffisient for** andel_hvit_alene: En positiv eller negativ koeffisient her kan indikere preferanser basert på nabolagssammensetning.
+```         
+•   **Koeffisient for** andel_hvit_alene: En positiv eller negativ koeffisient her kan indikere preferanser basert på nabolagssammensetning.
+```
+
 Hvis koeffisienten er signifikant, kan det tyde på at demografiske faktorer har en økonomisk betydning i boligmarkedet.
 
 **2. SEM-modellen (Spatial Error Model)**
 
-	•	**Koeffisient for** sqft_living: SEM-modellen reduserer spatial autokorrelasjon i residualene, noe som gir en renere effekt av boligstørrelsen på pris.
+```         
+•   **Koeffisient for** sqft_living: SEM-modellen reduserer spatial autokorrelasjon i residualene, noe som gir en renere effekt av boligstørrelsen på pris.
+```
+
 Koeffisienten forblir positiv, noe som fortsatt indikerer at større boliger gir høyere priser.
 
-	•	**Koeffisient for** andel_hvit_alene: Den spatialt justerte modellen tar høyde for romlige feilkorrelasjoner, noe som kan gi et mer pålitelig estimat for demografiske preferanser og redusere skjevheter fra naboområder.
+```         
+•   **Koeffisient for** andel_hvit_alene: Den spatialt justerte modellen tar høyde for romlige feilkorrelasjoner, noe som kan gi et mer pålitelig estimat for demografiske preferanser og redusere skjevheter fra naboområder.
+```
 
 **3. SAR-modellen (Spatial Lag Model)**
 
 For SAR-modellen må vi bruke **direkte og indirekte impacts** for å tolke effekten av variablene, da disse gir oss en mer fullstendig forståelse av både lokale og globale effekter.
 
-	•	**Direkte impact for** sqft_living: Direkte effekten viser hvordan en økning i boligstørrelsen påvirker prisen i samme område.
+```         
+•   **Direkte impact for** sqft_living: Direkte effekten viser hvordan en økning i boligstørrelsen påvirker prisen i samme område.
+```
+
 Den positive direkte effekten betyr at større boliger gir høyere priser, selv etter å ha tatt hensyn til naboers priser.
 
-	•	**Indirekte impact for** andel_hvit_alene: Den indirekte effekten indikerer hvordan sammensetningen i ett nabolag påvirker prisene i omkringliggende områder.
+```         
+•   **Indirekte impact for** andel_hvit_alene: Den indirekte effekten indikerer hvordan sammensetningen i ett nabolag påvirker prisene i omkringliggende områder.
+```
+
 Hvis andel_hvit_alene har en signifikant indirekte effekt, betyr det at demografiske faktorer i ett område påvirker boligpriser i nærliggende områder også.
 
 **4. SLX-modellen (Spatial Lag of X)**
 
-	•	**Koeffisient for** sqft_living: I SLX-modellen ser vi kun på effekten av laggede uavhengige variabler, og sqft_living har en positiv koeffisient, noe som betyr at prisene påvirkes direkte av boligens størrelse, og dette er romlig avhengig av naboenes boligstørrelse.
+```         
+•   **Koeffisient for** sqft_living: I SLX-modellen ser vi kun på effekten av laggede uavhengige variabler, og sqft_living har en positiv koeffisient, noe som betyr at prisene påvirkes direkte av boligens størrelse, og dette er romlig avhengig av naboenes boligstørrelse.
 
-	•	**Koeffisient for** andel_hvit_alene: Denne koeffisienten kan fange opp naboers demografiske påvirkning på boligprisen i en gitt bolig.
+•   **Koeffisient for** andel_hvit_alene: Denne koeffisienten kan fange opp naboers demografiske påvirkning på boligprisen i en gitt bolig.
+```
+
 Hvis signifikant, betyr det at nabolagssammensetningen har en økonomisk innvirkning, også i forhold til nærliggende nabolag.
 
 **5. SDEM-modellen (Spatial Durbin Error Model)**
 
-	•	**Direkte effekt for** sqft_living: Den positive direkte effekten for sqft_living antyder at større boliger har høyere priser, selv etter å ha kontrollert for spatial feilavhengighet og effekten av nabolagsegenskaper.
+```         
+•   **Direkte effekt for** sqft_living: Den positive direkte effekten for sqft_living antyder at større boliger har høyere priser, selv etter å ha kontrollert for spatial feilavhengighet og effekten av nabolagsegenskaper.
 
-	•	**Indirekte effekt for** andel_hvit_alene: Den indirekte effekten viser hvordan nabolagskomposisjonen påvirker omkringliggende boligpriser.
+•   **Indirekte effekt for** andel_hvit_alene: Den indirekte effekten viser hvordan nabolagskomposisjonen påvirker omkringliggende boligpriser.
+```
+
 Hvis signifikant, indikerer dette at demografiske faktorer ikke bare påvirker lokalt, men også har en viss spillover-effekt til andre nærliggende områder.
 
 **Konklusjon**
